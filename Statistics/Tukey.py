@@ -64,7 +64,7 @@ class Tukey:
     non_outliers = []
 
     # Check that list is populated
-    if(len(p_list) > 0):
+    if len(p_list) > 0:
       p_list.sort() # Sort list before starting
       split_idx = Tukey.__medianIdx(p_list)
       lower_list = p_list[0:split_idx]
