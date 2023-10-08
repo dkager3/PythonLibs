@@ -60,8 +60,7 @@ class Tukey:
     -------
       Result of Tukey test : Tukey.TukeyResult
     """
-    outliers = []
-    non_outliers = []
+    result = None
 
     # Check that list is populated
     if len(p_list) > 0:
@@ -69,6 +68,8 @@ class Tukey:
       split_idx = Tukey.__medianIdx(p_list)
       lower_list = p_list[0:split_idx]
       upper_list = []
+      outliers = []
+      non_outliers = []
 
       if len(p_list) % 2 == 0:
         # Even number of elements, split normally for
@@ -92,7 +93,9 @@ class Tukey:
         else:
           non_outliers.append(elem)
 
-    return Tukey.TukeyResult(outliers, non_outliers, lower_fence, upper_fence)
+      result = Tukey.TukeyResult(outliers, non_outliers, lower_fence, upper_fence)
+
+    return result
   
   @staticmethod
   def __median(p_list: List) -> float:
