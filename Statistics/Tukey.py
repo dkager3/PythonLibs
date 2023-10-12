@@ -64,34 +64,43 @@ class Tukey:
 
     # Check that list is populated
     if p_list is not None and len(p_list) > 0:
-      p_list.sort() # Sort list before starting
-      split_idx = Tukey.__medianIdx(p_list)
-      lower_list = p_list[0:split_idx]
-      upper_list = []
       outliers = []
       non_outliers = []
+      lower_fence = None
+      upper_fence = None
 
-      if len(p_list) % 2 == 0:
-        # Even number of elements, split normally for
-        # upper_list
-        upper_list = p_list[split_idx:]
+      if len(p_list) == 1:
+        # If there is only one value in the list, there are no elements
+        # to compare it to.
+        non_outliers = p_list
       else:
-        # Odd number of elements in list, remove median number
-        # for upper_list
-        upper_list = p_list[split_idx+1:]
+        # More than one value allows full Tukey test to run
+        p_list.sort() # Sort list before starting
+        split_idx = Tukey.__medianIdx(p_list)
+        lower_list = p_list[0:split_idx]
+        upper_list = []
 
-      Q1 = Tukey.__median(lower_list) # Median of lower list
-      Q3 = Tukey.__median(upper_list) # Median of upper list
-      IQR = Q3-Q1                     # Inter-Quartile Range
-      lower_fence = Q1 - (IQR * 1.5)  # Anything below this boundary is an outlier
-      upper_fence = Q3 + (IQR * 1.5)  # Anything above this boundary is an outlier
-
-      # Filter outliers and non-outliers
-      for elem in p_list:
-        if elem < lower_fence or elem > upper_fence:
-          outliers.append(elem)
+        if len(p_list) % 2 == 0:
+          # Even number of elements, split normally for
+          # upper_list
+          upper_list = p_list[split_idx:]
         else:
-          non_outliers.append(elem)
+          # Odd number of elements in list, remove median number
+          # for upper_list
+          upper_list = p_list[split_idx+1:]
+
+        Q1 = Tukey.__median(lower_list) # Median of lower list
+        Q3 = Tukey.__median(upper_list) # Median of upper list
+        IQR = Q3-Q1                     # Inter-Quartile Range
+        lower_fence = Q1 - (IQR * 1.5)  # Anything below this boundary is an outlier
+        upper_fence = Q3 + (IQR * 1.5)  # Anything above this boundary is an outlier
+
+        # Filter outliers and non-outliers
+        for elem in p_list:
+          if elem < lower_fence or elem > upper_fence:
+            outliers.append(elem)
+          else:
+            non_outliers.append(elem)
 
       result = Tukey.TukeyResult(outliers, non_outliers, lower_fence, upper_fence)
 
